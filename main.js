@@ -22,11 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // API Key Management
 // ─────────────────────────────────────────
 function initApiKey() {
-  if (apiKey) {
-    showSolverForm();
-  } else {
-    showApiKeyCard();
-  }
+  if (apiKey) showSolverForm();
+  else showApiKeyCard();
 
   document.getElementById('api-key-save').addEventListener('click', saveApiKey);
   document.getElementById('api-key-input').addEventListener('keydown', (e) => {
@@ -39,10 +36,7 @@ function initApiKey() {
 function saveApiKey() {
   const input = document.getElementById('api-key-input');
   const key = input.value.trim();
-  if (!key) {
-    input.focus();
-    return;
-  }
+  if (!key) { input.focus(); return; }
   apiKey = key;
   localStorage.setItem('gemini_api_key', key);
   input.value = '';
@@ -71,7 +65,6 @@ function initFileUpload() {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
   });
 
-  // Drag and drop
   uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
   uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
   uploadArea.addEventListener('drop', (e) => {
@@ -112,7 +105,6 @@ function handleFile(file) {
   document.getElementById('preview-wrap').classList.remove('hidden');
   document.getElementById('solve-btn').disabled = false;
 
-  // Reset result/error
   document.getElementById('result-box').classList.add('hidden');
   document.getElementById('error-box').classList.add('hidden');
 }
@@ -135,24 +127,16 @@ function clearFile() {
 // ─────────────────────────────────────────
 function initSolver() {
   document.getElementById('solve-btn').addEventListener('click', solve);
-
   document.getElementById('solve-again').addEventListener('click', () => {
     document.getElementById('result-box').classList.add('hidden');
     clearFile();
   });
-
   document.getElementById('retry-btn').addEventListener('click', solve);
 }
 
 async function solve() {
-  if (!currentFile) {
-    alert('수학 문제 사진을 선택해주세요.');
-    return;
-  }
-  if (!apiKey) {
-    showApiKeyCard();
-    return;
-  }
+  if (!currentFile) { alert('수학 문제 사진을 선택해주세요.'); return; }
+  if (!apiKey) { showApiKeyCard(); return; }
 
   const grade = document.querySelector('input[name="grade"]:checked')?.value || '1';
   const solveBtn = document.getElementById('solve-btn');
@@ -181,23 +165,16 @@ async function solve() {
 async function callGeminiApi(imageBase64, mimeType, grade) {
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
   const body = {
-    contents: [{
-      role: 'user',
-      parts: [
-        { inlineData: { mimeType: mimeType || 'image/jpeg', data: imageBase64 } },
-        { text: buildPrompt(grade) },
-      ],
-    }],
+    contents: [{ role: 'user', parts: [
+      { inlineData: { mimeType: mimeType || 'image/jpeg', data: imageBase64 } },
+      { text: buildPrompt(grade) },
+    ]}],
     generationConfig: { temperature: 0.2, maxOutputTokens: 8192 },
   };
 
   let res;
   try {
-    res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    });
+    res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   } catch {
     throw new Error('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
   }
@@ -293,7 +270,6 @@ function initFaq() {
         b.closest('.faq-item').classList.remove('open');
       });
 
-      // Toggle this one
       if (!isOpen) {
         btn.setAttribute('aria-expanded', 'true');
         item.classList.add('open');
@@ -318,7 +294,6 @@ function initNav() {
     toggle.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
   });
 
-  // Close menu on nav link click
   links.querySelectorAll('a').forEach((a) => {
     a.addEventListener('click', () => {
       links.classList.remove('open');
@@ -326,8 +301,7 @@ function initNav() {
     });
   });
 
-  // Sticky nav shadow on scroll
   window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 10);
+    if (nav) nav.classList.toggle('shadow-md', window.scrollY > 10);
   }, { passive: true });
 }
