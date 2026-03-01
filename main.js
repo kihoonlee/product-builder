@@ -29,8 +29,14 @@ function initApiKey() {
   document.getElementById('api-key-input').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') saveApiKey();
   });
+
+  // 데스크톱 solver card 내 변경 버튼 (있을 경우)
   const changeBtn = document.getElementById('api-key-change');
   if (changeBtn) changeBtn.addEventListener('click', showApiKeyCard);
+
+  // 모바일 네비 설정 버튼
+  const settingsBtn = document.getElementById('nav-settings-btn');
+  if (settingsBtn) settingsBtn.addEventListener('click', showApiKeyCard);
 }
 
 function saveApiKey() {

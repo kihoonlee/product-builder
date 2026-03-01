@@ -60,6 +60,9 @@ input[name="grade"]:checked + .grade-btn {
   background: #f5f3ff;
   color: #7c3aed;
 }
+input[name="grade"]:checked + .grade-btn .grade-sub {
+  opacity: 0.6;
+}
 
 /* ── Upload drag-over ── */
 .drag-over {
