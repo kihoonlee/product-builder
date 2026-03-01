@@ -282,26 +282,34 @@ function initFaq() {
 // Navigation
 // ─────────────────────────────────────────
 function initNav() {
-  const toggle = document.getElementById('nav-toggle');
-  const links = document.getElementById('nav-links');
   const nav = document.getElementById('nav');
-
-  if (!toggle || !links) return;
-
-  toggle.addEventListener('click', () => {
-    const isOpen = links.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', String(isOpen));
-    toggle.setAttribute('aria-label', isOpen ? '메뉴 닫기' : '메뉴 열기');
-  });
-
-  links.querySelectorAll('a').forEach((a) => {
-    a.addEventListener('click', () => {
-      links.classList.remove('open');
-      toggle.setAttribute('aria-expanded', 'false');
-    });
-  });
 
   window.addEventListener('scroll', () => {
     if (nav) nav.classList.toggle('shadow-md', window.scrollY > 10);
+    updateBottomNav();
   }, { passive: true });
+
+  updateBottomNav();
+}
+
+function updateBottomNav() {
+  const sections = [
+    { id: 'solver', navId: 'bnav-solver' },
+    { id: 'how-to', navId: 'bnav-howto' },
+    { id: 'curriculum', navId: 'bnav-curriculum' },
+    { id: 'faq', navId: 'bnav-faq' },
+  ];
+
+  const scrollY = window.scrollY + window.innerHeight / 3;
+  let activeId = 'bnav-solver';
+
+  for (const s of sections) {
+    const el = document.getElementById(s.id);
+    if (el && el.offsetTop <= scrollY) activeId = s.navId;
+  }
+
+  sections.forEach(({ navId }) => {
+    const btn = document.getElementById(navId);
+    if (btn) btn.classList.toggle('active', navId === activeId);
+  });
 }
